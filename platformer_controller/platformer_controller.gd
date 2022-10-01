@@ -31,6 +31,7 @@ export var jump_buffer : float = 0.1
 
 # Nodes
 onready var jump_asp = $Jump_AudioStreamPlayer
+onready var walljump_area2d = $WallJump_Area2D
 
 
 # not used
@@ -54,6 +55,7 @@ var acc = Vector2()
 
 onready var coyote_timer = Timer.new()
 onready var jump_buffer_timer = Timer.new()
+onready var wall_jump_mouse_disable_timer = Timer.new()
 
 
 func _init():
@@ -73,21 +75,26 @@ func _ready():
 	jump_buffer_timer.wait_time = jump_buffer
 	jump_buffer_timer.one_shot = true
 	
+	add_child(wall_jump_mouse_disable_timer)
+	wall_jump_mouse_disable_timer.wait_time = 0.2
+	wall_jump_mouse_disable_timer.one_shot = true
+	
 
 func _physics_process(delta):
 	acc.x = 0
 	
 	if is_on_floor():
 		coyote_timer.start()
-	elif is_on_wall():
-		coyote_timer.start()
+	if is_on_wall():
+		wall_jump_mouse_disable_timer.start()
 	if not coyote_timer.is_stopped():
 		jumps_left = max_jump_amount
 	
-	if Input.is_action_pressed(input_left):
-		acc.x = -max_acceleration
-	if Input.is_action_pressed(input_right):
-		acc.x = max_acceleration
+	if wall_jump_mouse_disable_timer.is_stopped():
+		if Input.is_action_pressed(input_left):
+			acc.x = -max_acceleration
+		if Input.is_action_pressed(input_right):
+			acc.x = max_acceleration
 	
 	
 	# Check for ground jumps when we can hold jump
@@ -127,11 +134,19 @@ func _physics_process(delta):
 	
 	if is_on_wall() and vel.y > 0:
 		acc.y = -gravity/5
+		vel.y = clamp(vel.y, 0, 500)
 	else:
 		acc.y = -gravity
 	vel.x *= 1 / (1 + (delta * friction))
 	
+	# Wall jump off wall
+	if Input.is_action_just_pressed("jump") and is_on_wall() and not is_on_floor():
+		var zero_collision = get_slide_collision(0)
+		if zero_collision:
+			vel.x += zero_collision.normal.x * 1500
+	
 	vel += acc * delta
+	
 	vel = move_and_slide(vel, Vector2.UP)
 
 
@@ -184,7 +199,6 @@ func jump():
 			vel.y = -jump_velocity
 		jumps_left -= 1
 		jump_asp.play()
-	
 	
 	coyote_timer.stop()
 

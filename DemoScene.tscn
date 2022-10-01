@@ -150,6 +150,9 @@ func _on_DedTimer_timeout():
 	get_tree().reload_current_scene()
 "
 
+[sub_resource type="RectangleShape2D" id=16]
+extents = Vector2( 42, 32 )
+
 [node name="Main" type="Node2D"]
 position = Vector2( 6, 0 )
 script = SubResource( 15 )
@@ -245,6 +248,7 @@ position = Vector2( 119, 302 )
 [node name="PlatformerController2D" type="KinematicBody2D" parent="."]
 position = Vector2( 288, 320 )
 script = ExtResource( 1 )
+max_jump_amount = 1
 
 [node name="icon" type="Sprite" parent="PlatformerController2D"]
 texture = ExtResource( 2 )
@@ -288,3 +292,8 @@ shape = SubResource( 4 )
 [connection signal="timeout" from="PlatformerController2D/PlayerStatus/DedTimer" to="PlatformerController2D/PlayerStatus" method="_on_DedTimer_timeout"]
 [connection signal="timeout" from="MainTimer" to="." method="_on_MainTimer_timeout"]
 [connection signal="timeout" from="MainTimer" to="." method="_on_10Sec_timeout"]
+
+[node name="WallJump_Area2D" type="Area2D" parent="PlatformerController2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformerController2D/WallJump_Area2D"]
+shape = SubResource( 16 )
