@@ -128,7 +128,6 @@ func _ready():
 	
 	
 func _process(delta):
-	return
 	if is_night:
 		if not in_light and ded_timer.is_stopped():
 			ded_timer.start(0.4)

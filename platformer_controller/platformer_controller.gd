@@ -92,7 +92,7 @@ func _physics_process(delta):
 		vel.x = 0
 	if not coyote_timer.is_stopped():
 		jumps_left = max_jump_amount
-		
+	
 	
 	if wall_jump_mouse_disable_timer.is_stopped() or is_on_wall():
 		if Input.is_action_pressed(input_left):
