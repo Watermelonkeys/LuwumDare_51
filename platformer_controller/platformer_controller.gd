@@ -57,6 +57,8 @@ onready var coyote_timer = Timer.new()
 onready var jump_buffer_timer = Timer.new()
 onready var wall_jump_mouse_disable_timer = Timer.new()
 
+var last_wall_normal: Vector2 = Vector2.ZERO
+
 
 func _init():
 	default_gravity = calculate_gravity(max_jump_height, jump_duration)
@@ -76,7 +78,7 @@ func _ready():
 	jump_buffer_timer.one_shot = true
 	
 	add_child(wall_jump_mouse_disable_timer)
-	wall_jump_mouse_disable_timer.wait_time = 0.2
+	wall_jump_mouse_disable_timer.wait_time = 0.1
 	wall_jump_mouse_disable_timer.one_shot = true
 	
 
@@ -86,15 +88,21 @@ func _physics_process(delta):
 	if is_on_floor():
 		coyote_timer.start()
 	if is_on_wall():
-		wall_jump_mouse_disable_timer.start()
+		coyote_timer.start()
+		vel.x = 0
 	if not coyote_timer.is_stopped():
 		jumps_left = max_jump_amount
+		
 	
-	if wall_jump_mouse_disable_timer.is_stopped():
+	if wall_jump_mouse_disable_timer.is_stopped() or is_on_wall():
 		if Input.is_action_pressed(input_left):
 			acc.x = -max_acceleration
 		if Input.is_action_pressed(input_right):
 			acc.x = max_acceleration
+	else:
+		if not is_on_wall() and not is_on_floor():
+			if Input.is_action_pressed(input_left) or Input.is_action_pressed(input_right):
+				acc.x = last_wall_normal.x * max_acceleration
 	
 	
 	# Check for ground jumps when we can hold jump
@@ -143,11 +151,33 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("jump") and is_on_wall() and not is_on_floor():
 		var zero_collision = get_slide_collision(0)
 		if zero_collision:
-			vel.x += zero_collision.normal.x * 1500
+			last_wall_normal = zero_collision.normal
+			vel.x += zero_collision.normal.x * 1000
+	
+	
+	if is_on_wall():
+		wall_jump_mouse_disable_timer.start()
 	
 	vel += acc * delta
 	
 	vel = move_and_slide(vel, Vector2.UP)
+
+
+func jump():
+	if jumps_left == max_jump_amount and coyote_timer.is_stopped():
+		# Your first jump must be used when on the ground
+		# If you fall off the ground and then jump you will be using you second jump
+		jumps_left -= 1
+		
+	if jumps_left > 0:
+		if jumps_left < max_jump_amount: # If we are double jumping
+			vel.y = -double_jump_velocity
+		else:
+			vel.y = -jump_velocity
+		jumps_left -= 1
+		jump_asp.play()
+	
+	coyote_timer.stop()
 
 
 func calculate_gravity(p_max_jump_height, p_jump_duration):
@@ -184,23 +214,6 @@ func calculate_friction(time_to_max):
 func calculate_speed(p_max_speed, p_friction):
 	# Formula from https://www.reddit.com/r/gamedev/comments/bdbery/comment/ekxw9g4/?utm_source=share&utm_medium=web2x&context=3	
 	return (p_max_speed / p_friction) - p_max_speed
-
-
-func jump():
-	if jumps_left == max_jump_amount and coyote_timer.is_stopped():
-		# Your first jump must be used when on the ground
-		# If you fall off the ground and then jump you will be using you second jump
-		jumps_left -= 1
-		
-	if jumps_left > 0:
-		if jumps_left < max_jump_amount: # If we are double jumping
-			vel.y = -double_jump_velocity
-		else:
-			vel.y = -jump_velocity
-		jumps_left -= 1
-		jump_asp.play()
-	
-	coyote_timer.stop()
 
 
 func set_max_jump_height(value):

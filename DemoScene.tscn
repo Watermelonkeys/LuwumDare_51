@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://platformer_controller/platformer_controller.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -128,6 +128,7 @@ func _ready():
 	
 	
 func _process(delta):
+	return
 	if is_night:
 		if not in_light and ded_timer.is_stopped():
 			ded_timer.start(0.4)
@@ -190,6 +191,9 @@ shape = SubResource( 1 )
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
 position = Vector2( 520, 360 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="Sprite" type="Sprite" parent="StaticBody2D2"]
 position = Vector2( -520, 16 )
@@ -206,6 +210,9 @@ shape = SubResource( 2 )
 
 [node name="StaticBody2D3" type="StaticBody2D" parent="."]
 position = Vector2( 520, 360 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D3"]
 position = Vector2( -552, -64 )
@@ -223,6 +230,47 @@ __meta__ = {
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D3"]
 position = Vector2( 536, -64 )
 shape = SubResource( 3 )
+
+[node name="Sprite2" type="Sprite" parent="StaticBody2D3"]
+position = Vector2( 505, 241 )
+scale = Vector2( 0.0307617, -608 )
+texture = SubResource( 9 )
+centered = false
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StaticBody2D4" type="StaticBody2D" parent="."]
+position = Vector2( 692, 24 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D4"]
+position = Vector2( -552, -64 )
+shape = SubResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D4"]
+position = Vector2( -584, -369 )
+scale = Vector2( 0.0317383, 609 )
+texture = SubResource( 9 )
+centered = false
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D4"]
+position = Vector2( 536, -64 )
+shape = SubResource( 3 )
+
+[node name="Sprite2" type="Sprite" parent="StaticBody2D4"]
+position = Vector2( 505, 241 )
+scale = Vector2( 0.0307617, -608 )
+texture = SubResource( 9 )
+centered = false
+__meta__ = {
+"_editor_description_": ""
+}
 
 [node name="KinematicBody2D" type="RigidBody2D" parent="."]
 position = Vector2( 809, 390 )
@@ -284,6 +332,11 @@ shape = SubResource( 4 )
 
 [node name="DedTimer" type="Timer" parent="PlatformerController2D/PlayerStatus"]
 
+[node name="WallJump_Area2D" type="Area2D" parent="PlatformerController2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformerController2D/WallJump_Area2D"]
+shape = SubResource( 16 )
+
 [node name="MainTimer" type="Timer" parent="."]
 
 [connection signal="cycle_started" from="." to="PlatformerController2D/PlayerStatus" method="_on_cycle_started"]
@@ -292,8 +345,3 @@ shape = SubResource( 4 )
 [connection signal="timeout" from="PlatformerController2D/PlayerStatus/DedTimer" to="PlatformerController2D/PlayerStatus" method="_on_DedTimer_timeout"]
 [connection signal="timeout" from="MainTimer" to="." method="_on_MainTimer_timeout"]
 [connection signal="timeout" from="MainTimer" to="." method="_on_10Sec_timeout"]
-
-[node name="WallJump_Area2D" type="Area2D" parent="PlatformerController2D"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformerController2D/WallJump_Area2D"]
-shape = SubResource( 16 )
