@@ -6,15 +6,15 @@ var velocity = Vector2()
 
 func get_input():
 	velocity = Vector2()
-	if Input.is_action_pressed("right"):
+	if Input.is_action_pressed("ui_right"):
 		velocity.x += 1
-	if Input.is_action_pressed("left"):
+	if Input.is_action_pressed("ui_left"):
 		velocity.x -= 1
 	
-	if Input.is_action_pressed("down"):
+	if Input.is_action_pressed("ui_down"):
 		#seduto 
 		pass
-	if Input.is_action_pressed("up"):
+	if Input.is_action_pressed("ui_up"):
 		#salto
 		pass
 		
