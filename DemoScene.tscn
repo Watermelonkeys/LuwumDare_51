@@ -1,10 +1,43 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://platformer_controller/platformer_controller.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://assets/sounds/salto1.wav" type="AudioStream" id=3]
 [ext_resource path="res://components/Checkpoint.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/bgGradient.tres" type="Gradient" id=5]
+
+[sub_resource type="GDScript" id=15]
+script/source = "extends Node2D
+
+signal cycle_started(is_night)
+
+# the 10 in \"every 10 seconds\"
+### DEBUG VALUE - 10s in release
+const DAY_LENGTH = 4
+const NIGHT_LENGTH = 4
+
+onready var bg_sprite = $CanvasLayer/Sprite
+onready var timer = $MainTimer
+
+var is_night := false
+
+func _ready():
+	next_cycle()
+
+func next_cycle():
+	var time = NIGHT_LENGTH if is_night else DAY_LENGTH
+	
+	### TEMP - modulate should tween to black/white
+	bg_sprite.modulate = Color.black if is_night else Color.white
+	### TEMP
+	
+	timer.start(time)
+	emit_signal(\"cycle_started\", is_night)
+
+func _on_MainTimer_timeout():
+	is_night = not is_night
+	next_cycle()
+"
 
 [sub_resource type="GradientTexture2D" id=11]
 gradient = ExtResource( 5 )
@@ -84,13 +117,20 @@ extents = Vector2( 32, 32 )
 [sub_resource type="GDScript" id=14]
 script/source = "extends Node2D
 
-var health := 100
+onready var ded_timer = $DedTimer
+
+var health := 100.0
 var is_night := false
 var in_light := false
 
 func _ready():
 	print(\"In light: %s\" % in_light)
-
+	
+	
+func _process(delta):
+	if is_night:
+		if not in_light and ded_timer.is_stopped():
+			ded_timer.start(0.4)
 
 func _on_LightCheck_entered(area):
 	in_light = true
@@ -100,10 +140,19 @@ func _on_LightCheck_entered(area):
 func _on_LightCheck_exited(area):
 	in_light = false
 #	print(\"In light: %s\" % in_light)
+
+
+func _on_cycle_started(i_n):
+	is_night = i_n
+
+
+func _on_DedTimer_timeout():
+	get_tree().reload_current_scene()
 "
 
 [node name="Main" type="Node2D"]
 position = Vector2( 6, 0 )
+script = SubResource( 15 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
@@ -224,11 +273,18 @@ __meta__ = {
 }
 
 [node name="LightCheck" type="Area2D" parent="PlatformerController2D/PlayerStatus"]
-collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformerController2D/PlayerStatus/LightCheck"]
 shape = SubResource( 4 )
 
+[node name="DedTimer" type="Timer" parent="PlatformerController2D/PlayerStatus"]
+
+[node name="MainTimer" type="Timer" parent="."]
+
+[connection signal="cycle_started" from="." to="PlatformerController2D/PlayerStatus" method="_on_cycle_started"]
 [connection signal="area_entered" from="PlatformerController2D/PlayerStatus/LightCheck" to="PlatformerController2D/PlayerStatus" method="_on_LightCheck_entered"]
 [connection signal="area_exited" from="PlatformerController2D/PlayerStatus/LightCheck" to="PlatformerController2D/PlayerStatus" method="_on_LightCheck_exited"]
+[connection signal="timeout" from="PlatformerController2D/PlayerStatus/DedTimer" to="PlatformerController2D/PlayerStatus" method="_on_DedTimer_timeout"]
+[connection signal="timeout" from="MainTimer" to="." method="_on_MainTimer_timeout"]
+[connection signal="timeout" from="MainTimer" to="." method="_on_10Sec_timeout"]
