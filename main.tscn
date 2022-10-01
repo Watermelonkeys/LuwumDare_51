@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://main.gd" type="Script" id=1]
+[ext_resource path="res://player.tscn" type="PackedScene" id=2]
+
+[node name="main" type="Node"]
+script = ExtResource( 1 )
+
+[node name="Timer10" type="Timer" parent="."]
+wait_time = 10.0
+
+[node name="Shock" type="Timer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 1025.0
+margin_bottom = 599.0
+
+[node name="player" parent="." instance=ExtResource( 2 )]
+
+[connection signal="timeout" from="Timer10" to="." method="_on_Timer_timeout"]
+[connection signal="timeout" from="Shock" to="." method="_on_Shock_timeout"]
