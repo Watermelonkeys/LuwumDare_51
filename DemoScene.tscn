@@ -1,9 +1,9 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://platformer_controller/platformer_controller.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://assets/sounds/salto1.wav" type="AudioStream" id=3]
-[ext_resource path="res://components/light.tscn" type="PackedScene" id=4]
+[ext_resource path="res://components/Checkpoint.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/bgGradient.tres" type="Gradient" id=5]
 
 [sub_resource type="GradientTexture2D" id=11]
@@ -81,7 +81,29 @@ tracks/0/keys = {
 [sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 32, 32 )
 
+[sub_resource type="GDScript" id=14]
+script/source = "extends Node2D
+
+var health := 100
+var is_night := false
+var in_light := false
+
+func _ready():
+	print(\"In light: %s\" % in_light)
+
+
+func _on_LightCheck_entered(area):
+	in_light = true
+#	print(\"In light: %s\" % in_light)
+
+
+func _on_LightCheck_exited(area):
+	in_light = false
+#	print(\"In light: %s\" % in_light)
+"
+
 [node name="Main" type="Node2D"]
+position = Vector2( 6, 0 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
@@ -169,7 +191,7 @@ anims/RESET = SubResource( 6 )
 anims/elevator1 = SubResource( 7 )
 
 [node name="light" parent="." instance=ExtResource( 4 )]
-position = Vector2( 339, 127 )
+position = Vector2( 119, 302 )
 
 [node name="PlatformerController2D" type="KinematicBody2D" parent="."]
 position = Vector2( 288, 320 )
@@ -194,3 +216,19 @@ limit_bottom = 669
 limit_smoothed = true
 smoothing_enabled = true
 editor_draw_limits = true
+
+[node name="PlayerStatus" type="Node2D" parent="PlatformerController2D"]
+script = SubResource( 14 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="LightCheck" type="Area2D" parent="PlatformerController2D/PlayerStatus"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformerController2D/PlayerStatus/LightCheck"]
+shape = SubResource( 4 )
+
+[connection signal="area_entered" from="PlatformerController2D/PlayerStatus/LightCheck" to="PlatformerController2D/PlayerStatus" method="_on_LightCheck_entered"]
+[connection signal="area_exited" from="PlatformerController2D/PlayerStatus/LightCheck" to="PlatformerController2D/PlayerStatus" method="_on_LightCheck_exited"]
