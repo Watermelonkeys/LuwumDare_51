@@ -236,7 +236,6 @@ anims/elevator1 = SubResource( 7 )
 position = Vector2( 119, 302 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
-max_acceleration = 3000
 
 [node name="MainTimer" type="Timer" parent="."]
 

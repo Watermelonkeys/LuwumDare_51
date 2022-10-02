@@ -7,6 +7,9 @@ enum STATES {
 }
 
 export(float, 2.0, 10.0, 0.1) var attack_dist = 5.0
+export(float, 5.0, 200.0, 0.1) var roam_jitter = 100.0
+export(float, 1.0, 500.0, 0.1) var roam_max_speed = 100.0
+export(float, 0.01, 1.0, 0.01) var roam_acceleration = 0.4
 
 onready var ray := $RayCast2D
 
@@ -14,9 +17,11 @@ var noise_idx := 0.0
 var noise := OpenSimplexNoise.new()
 var state = STATES.ROAM 
 var player : PlatformerController2D = null
+var velocity := Vector2.ZERO
 var dir := Vector2.RIGHT
 
 func _ready():
+	$AnimatedSprite.playing = true
 	# Since there are no enemies during the day,
 	# we can assume this node will be instanced
 	# WAY AFTER the whole scene has been loaded
@@ -59,14 +64,23 @@ func check_state():
 func run_state(delta):
 	match state:
 		STATES.ROAM:
-			noise_idx += delta
-			var n = noise.get_noise_1d(noise_idx)
-			n = range_lerp(n, -1.0, 1.0, PI/6.0, PI/3.0)
-			print(rad2deg(n))
+			noise_idx += delta * 100
+			var _n = noise.get_noise_1d(noise_idx)
+			var n = range_lerp(_n, -1.0, 1.0, -TAU/4.0, TAU/4.0)
 			
-			dir = Vector2.RIGHT.rotated(n * 100.0)
-			$DEBUG_Dir.rotation = dir.angle()
+			dir = lerp(dir, dir.rotated(n * 0.1), 0.5)
 			
-			move_and_slide(dir * 30.0)
+			#print("noise: %s | angle: %s | dir: %s " % [_n, rad2deg(n), dir])
+			
+			velocity = velocity.linear_interpolate(dir * roam_max_speed, roam_acceleration)
+			
+			var coll = move_and_collide(velocity * delta)
+			
+			if coll:
+				dir = dir.rotated(TAU/2.0)
+				velocity = velocity.rotated(TAU/2.0)
+			
+			$AnimatedSprite.flip_h = (velocity.x > 0)
+
 		STATES.ATTACK:
 			pass
