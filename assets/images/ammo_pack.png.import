@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/enemy_spritesheet.png-8c8ee633a69883695c9159a1fa3b57ff.stex"
+path="res://.import/ammo_pack.png-472dd69672c66589e1df0eba0371af97.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/enemy_spritesheet.png"
-dest_files=[ "res://.import/enemy_spritesheet.png-8c8ee633a69883695c9159a1fa3b57ff.stex" ]
+source_file="res://assets/images/ammo_pack.png"
+dest_files=[ "res://.import/ammo_pack.png-472dd69672c66589e1df0eba0371af97.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2
