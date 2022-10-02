@@ -159,10 +159,7 @@ func _physics_process(delta):
 		if zero_collision:
 			last_wall_normal = zero_collision.normal
 			vel.x += zero_collision.normal.x * 1000
-	
-	
-	if is_on_wall():
-		wall_jump_mouse_disable_timer.start()
+			wall_jump_mouse_disable_timer.start()
 	
 	vel += acc * delta
 	
