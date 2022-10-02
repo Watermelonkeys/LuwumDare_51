@@ -1,0 +1,89 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://assets/bgGradient.tres" type="Gradient" id=1]
+[ext_resource path="res://assets/images/bg/spritesheet.png" type="Texture" id=2]
+
+[sub_resource type="GradientTexture2D" id=11]
+gradient = ExtResource( 1 )
+fill_to = Vector2( 0, 0.897222 )
+
+[sub_resource type="AtlasTexture" id=18]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=19]
+atlas = ExtResource( 2 )
+region = Rect2( 282, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=20]
+atlas = ExtResource( 2 )
+region = Rect2( 564, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=21]
+atlas = ExtResource( 2 )
+region = Rect2( 846, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=22]
+atlas = ExtResource( 2 )
+region = Rect2( 1128, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=23]
+atlas = ExtResource( 2 )
+region = Rect2( 1410, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=24]
+atlas = ExtResource( 2 )
+region = Rect2( 1692, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=25]
+atlas = ExtResource( 2 )
+region = Rect2( 1974, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=26]
+atlas = ExtResource( 2 )
+region = Rect2( 2256, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=27]
+atlas = ExtResource( 2 )
+region = Rect2( 2538, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=28]
+atlas = ExtResource( 2 )
+region = Rect2( 2820, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=29]
+atlas = ExtResource( 2 )
+region = Rect2( 3102, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=30]
+atlas = ExtResource( 2 )
+region = Rect2( 3384, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=31]
+atlas = ExtResource( 2 )
+region = Rect2( 3666, 0, 282, 269 )
+
+[sub_resource type="SpriteFrames" id=17]
+animations = [ {
+"frames": [ SubResource( 18 ), SubResource( 19 ), SubResource( 20 ), SubResource( 21 ), SubResource( 22 ), SubResource( 23 ), SubResource( 24 ), SubResource( 25 ), SubResource( 26 ), SubResource( 27 ), SubResource( 28 ), SubResource( 29 ), SubResource( 30 ), SubResource( 31 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+layer = -1
+follow_viewport_enable = true
+follow_viewport_scale = 0.986
+
+[node name="BackgroundGradient" type="Sprite" parent="."]
+light_mask = 0
+position = Vector2( 498, 215 )
+scale = Vector2( 20.1942, 15.3125 )
+texture = SubResource( 11 )
+region_rect = Rect2( 0, 0, 7.484, 0 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+position = Vector2( 518, 288 )
+scale = Vector2( 2.63941, 2.63941 )
+frames = SubResource( 17 )

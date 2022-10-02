@@ -30,6 +30,13 @@ config/name="LuwumDare51"
 run/main_scene="res://DemoScene.tscn"
 config/icon="res://icon.png"
 
+[display]
+
+window/size/width=480
+window/size/height=270
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
 [gdnative]
 
 singletons=[ "res://addons/godot-git-plugin/git_api.gdnlib" ]

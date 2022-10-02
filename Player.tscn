@@ -1,0 +1,96 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://platformer_controller/platformer_controller.gd" type="Script" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://assets/sounds/salto1.wav" type="AudioStream" id=3]
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 32, 32 )
+
+[sub_resource type="GDScript" id=14]
+script/source = "extends Node2D
+
+onready var ded_timer = $DedTimer
+
+var health := 100.0
+var is_night := false
+var in_light := false
+
+func _ready():
+	print(\"In light: %s\" % in_light)
+	
+	
+func _process(delta):
+	pass
+	if is_night:
+		if not in_light and ded_timer.is_stopped():
+			ded_timer.start(0.4)
+
+func _on_LightCheck_entered(area):
+	in_light = true
+#	print(\"In light: %s\" % in_light)
+
+
+func _on_LightCheck_exited(area):
+	in_light = false
+#	print(\"In light: %s\" % in_light)
+
+
+func _on_cycle_started(i_n):
+	is_night = i_n
+
+
+func _on_DedTimer_timeout():
+	get_tree().reload_current_scene()
+"
+
+[sub_resource type="RectangleShape2D" id=16]
+extents = Vector2( 42, 32 )
+
+[node name="PlatformerController2D" type="KinematicBody2D"]
+position = Vector2( 288, 320 )
+script = ExtResource( 1 )
+max_jump_amount = 1
+
+[node name="icon" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 4 )
+
+[node name="Jump_AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = -28.614
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+limit_left = -129
+limit_top = -217
+limit_right = 1123
+limit_bottom = 669
+limit_smoothed = true
+smoothing_enabled = true
+editor_draw_limits = true
+
+[node name="PlayerStatus" type="Node2D" parent="."]
+script = SubResource( 14 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="LightCheck" type="Area2D" parent="PlayerStatus"]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerStatus/LightCheck"]
+shape = SubResource( 4 )
+
+[node name="DedTimer" type="Timer" parent="PlayerStatus"]
+
+[node name="WallJump_Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallJump_Area2D"]
+shape = SubResource( 16 )
+
+[connection signal="area_entered" from="PlayerStatus/LightCheck" to="PlayerStatus" method="_on_LightCheck_entered"]
+[connection signal="area_exited" from="PlayerStatus/LightCheck" to="PlayerStatus" method="_on_LightCheck_exited"]
+[connection signal="timeout" from="PlayerStatus/DedTimer" to="PlayerStatus" method="_on_DedTimer_timeout"]
