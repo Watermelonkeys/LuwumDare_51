@@ -74,16 +74,12 @@ animations = [ {
 [node name="CanvasLayer" type="CanvasLayer"]
 layer = -1
 follow_viewport_enable = true
-follow_viewport_scale = 0.986
 
 [node name="BackgroundGradient" type="Sprite" parent="."]
 light_mask = 0
-position = Vector2( 498, 215 )
-scale = Vector2( 20.1942, 15.3125 )
+scale = Vector2( 14.0658, 7.9375 )
 texture = SubResource( 11 )
 region_rect = Rect2( 0, 0, 7.484, 0 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
-position = Vector2( 518, 288 )
-scale = Vector2( 2.63941, 2.63941 )
 frames = SubResource( 17 )

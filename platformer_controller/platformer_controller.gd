@@ -32,6 +32,8 @@ export var jump_buffer : float = 0.1
 # Nodes
 onready var jump_asp = $Jump_AudioStreamPlayer
 onready var walljump_area2d = $WallJump_Area2D
+onready var camera: Camera2D = $Camera2D
+onready var bg: Node2D = $BG
 
 
 # not used
@@ -80,7 +82,11 @@ func _ready():
 	add_child(wall_jump_mouse_disable_timer)
 	wall_jump_mouse_disable_timer.wait_time = 0.1
 	wall_jump_mouse_disable_timer.one_shot = true
-	
+
+
+func _process(delta):
+	bg.global_position = camera.get_camera_screen_center()
+
 
 func _physics_process(delta):
 	acc.x = 0

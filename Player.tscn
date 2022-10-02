@@ -1,11 +1,84 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://platformer_controller/platformer_controller.gd" type="Script" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/test_spritesheet.png" type="Texture" id=2]
 [ext_resource path="res://assets/sounds/salto1.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/images/bg/spritesheet.png" type="Texture" id=4]
+[ext_resource path="res://assets/bgGradient.tres" type="Gradient" id=5]
+
+[sub_resource type="GradientTexture2D" id=32]
+gradient = ExtResource( 5 )
+fill_to = Vector2( 0, 0.897222 )
+
+[sub_resource type="CanvasItemMaterial" id=34]
+light_mode = 1
+
+[sub_resource type="AtlasTexture" id=18]
+atlas = ExtResource( 4 )
+region = Rect2( 0, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=19]
+atlas = ExtResource( 4 )
+region = Rect2( 282, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=20]
+atlas = ExtResource( 4 )
+region = Rect2( 564, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=21]
+atlas = ExtResource( 4 )
+region = Rect2( 846, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=22]
+atlas = ExtResource( 4 )
+region = Rect2( 1128, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=23]
+atlas = ExtResource( 4 )
+region = Rect2( 1410, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=24]
+atlas = ExtResource( 4 )
+region = Rect2( 1692, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=25]
+atlas = ExtResource( 4 )
+region = Rect2( 1974, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=26]
+atlas = ExtResource( 4 )
+region = Rect2( 2256, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=27]
+atlas = ExtResource( 4 )
+region = Rect2( 2538, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=28]
+atlas = ExtResource( 4 )
+region = Rect2( 2820, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=29]
+atlas = ExtResource( 4 )
+region = Rect2( 3102, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=30]
+atlas = ExtResource( 4 )
+region = Rect2( 3384, 0, 282, 269 )
+
+[sub_resource type="AtlasTexture" id=31]
+atlas = ExtResource( 4 )
+region = Rect2( 3666, 0, 282, 269 )
+
+[sub_resource type="SpriteFrames" id=33]
+animations = [ {
+"frames": [ SubResource( 18 ), SubResource( 19 ), SubResource( 20 ), SubResource( 21 ), SubResource( 22 ), SubResource( 23 ), SubResource( 24 ), SubResource( 25 ), SubResource( 26 ), SubResource( 27 ), SubResource( 28 ), SubResource( 29 ), SubResource( 30 ), SubResource( 31 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
 
 [sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 32, 32 )
+extents = Vector2( 7, 7 )
 
 [sub_resource type="GDScript" id=14]
 script/source = "extends Node2D
@@ -45,15 +118,36 @@ func _on_DedTimer_timeout():
 "
 
 [sub_resource type="RectangleShape2D" id=16]
-extents = Vector2( 42, 32 )
+extents = Vector2( 9, 7 )
 
 [node name="PlatformerController2D" type="KinematicBody2D"]
 position = Vector2( 288, 320 )
 script = ExtResource( 1 )
 max_jump_amount = 1
 
+[node name="BG" type="Node2D" parent="."]
+z_index = -100
+z_as_relative = false
+
+[node name="BackgroundGradient" type="Sprite" parent="BG"]
+light_mask = 0
+scale = Vector2( 14.0658, 7.9375 )
+z_index = -100
+z_as_relative = false
+texture = SubResource( 32 )
+region_rect = Rect2( 0, 0, 7.484, 0 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="BG"]
+light_mask = 0
+material = SubResource( 34 )
+z_index = -100
+z_as_relative = false
+frames = SubResource( 33 )
+
 [node name="icon" type="Sprite" parent="."]
 texture = ExtResource( 2 )
+hframes = 3
+vframes = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 4 )
@@ -63,6 +157,7 @@ stream = ExtResource( 3 )
 volume_db = -28.614
 
 [node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2( 0, -48 )
 current = true
 limit_left = -129
 limit_top = -217
