@@ -29,7 +29,7 @@ animations = [ {
 "frames": [ SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ) ],
 "loop": false,
 "name": "spawning",
-"speed": 4.0
+"speed": 1.0
 } ]
 
 [sub_resource type="CircleShape2D" id=2]

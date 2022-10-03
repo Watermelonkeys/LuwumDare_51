@@ -16,8 +16,6 @@ const NIGHT_LENGTH = 4
 
 onready var bg_sprite = $CanvasLayer/BackgroundGradient
 onready var timer = $MainTimer
-# now all of China knows who the player is
-onready var player = $Player
 
 var is_night := false
 
@@ -242,5 +240,5 @@ position = Vector2( 119, 302 )
 [node name="GameMode" type="Node" parent="."]
 script = ExtResource( 6 )
 
-[connection signal="timeout" from="MainTimer" to="." method="_on_MainTimer_timeout"]
 [connection signal="timeout" from="MainTimer" to="." method="_on_10Sec_timeout"]
+[connection signal="timeout" from="MainTimer" to="." method="_on_MainTimer_timeout"]

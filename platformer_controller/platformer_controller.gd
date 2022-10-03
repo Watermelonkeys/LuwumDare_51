@@ -71,6 +71,9 @@ func _init():
 
 
 func _ready():
+	# Show all of China who the player is
+	owner.set_meta("player", self)
+	
 	add_child(coyote_timer)
 	coyote_timer.wait_time = coyote_time
 	coyote_timer.one_shot = true
