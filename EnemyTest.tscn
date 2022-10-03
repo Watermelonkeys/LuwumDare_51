@@ -20,7 +20,6 @@ position = Vector2( 79, 74 )
 attack_dist = 80.0
 roam_max_speed = 110.0
 roam_acceleration = 0.2
-charge_timer_len = 1.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 position = Vector2( 242, 0 )

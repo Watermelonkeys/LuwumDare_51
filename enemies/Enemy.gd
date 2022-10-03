@@ -4,34 +4,36 @@ extends KinematicBody2D
 enum STATES {
 	SPAWN,
 	ROAM,  # fly around until player is in reach
-	CHARGE, # go fuck up the player
-	ATTACK
+	AGGRO, # get mad because you saw the player
+	CHARGE, #RUN to the player
+	ATTACK #fuck up the player if the sucker didnt run away
 }
 
 export(float, 2.0, 150.0, 0.1) var attack_dist = 150.0
 export(float, 1.0, 500.0, 0.1) var roam_max_speed = 100.0
 export(float, 1.0, 200.0, 0.1) var attack_speed_mul = 10.0
 export(float, 0.01, 1.0, 0.01) var roam_acceleration = 0.4
-export(float, 0.01, 5.0, 0.01) var charge_timer_len = 2.0
+export(float, 0.01, 5.0, 0.01) var aggro_timer_len = 2.0
 
 onready var ray := $RayCast2D
 onready var anim_sprite := $AnimatedSprite
 
-var charge_timer := Timer.new()
+var aggro_timer := Timer.new()
 var noise_idx := 0.0
 var noise := OpenSimplexNoise.new()
 var state = STATES.SPAWN 
 var player : PlatformerController2D = null
 var velocity := Vector2.ZERO
 var dir := Vector2.RIGHT
-var attack_target := Vector2.ZERO
-var attack_reached := false
+var charge_target := Vector2.ZERO
+var charge_collision : KinematicCollision2D = null
+var charge_done := false
 var spawn_done := false
 
 func _ready():
-	add_child(charge_timer)
-	charge_timer.one_shot = true
-	charge_timer.wait_time = charge_timer_len
+	add_child(aggro_timer)
+	aggro_timer.one_shot = true
+	aggro_timer.wait_time = aggro_timer_len
 	
 	anim_sprite.animation = "spawning"
 	anim_sprite.playing = true
@@ -78,12 +80,17 @@ func check_state():
 				var coll = ray.get_collider()
 				if coll and coll == player:
 					# LADIES N GENTLEMEN WE GOT HIM
-					return STATES.CHARGE
+					return STATES.AGGRO
+		STATES.AGGRO:
+			if aggro_timer.time_left <= 0.0:
+				return STATES.CHARGE
 		STATES.CHARGE:
-			if charge_timer.time_left <= 0.0:
+			charge_done = charge_collision and charge_collision.collider == player
+			if charge_done:
 				return STATES.ATTACK
 		STATES.ATTACK:
-			if attack_reached:
+			return state
+			if dist_to_player() > 20.0:
 				return STATES.ROAM
 					
 	return state
@@ -95,14 +102,23 @@ func init_state():
 			# nothing to do
 			pass
 		STATES.ROAM:
+			anim_sprite.modulate = Color.white
+			velocity *= 0.0
+			dir = Vector2.RIGHT
 			anim_sprite.animation = "roaming"
 			anim_sprite.playing = true
+		STATES.AGGRO:
+			velocity *= 0.0
+			dir = Vector2.RIGHT
+			aggro_timer.start()
+			charge_target = player.position
 		STATES.CHARGE:
-			charge_timer.start()
-			attack_target = player.position
-		STATES.ATTACK:
-			attack_reached = false
+			charge_done = false
 			anim_sprite.offset *= 0.0
+		STATES.ATTACK:
+			## TEMP
+			velocity *= 0.0
+			anim_sprite.modulate = Color.red
 	
 func run_state(delta):
 	match state:
@@ -115,8 +131,6 @@ func run_state(delta):
 			var n = range_lerp(_n, -1.0, 1.0, -TAU/4.0, TAU/4.0)
 			
 			dir = dir.linear_interpolate(dir.rotated(n * 0.1), 0.5)
-			
-			#print("noise: %s | angle: %s | dir: %s " % [_n, rad2deg(n), dir])
 			
 			velocity = velocity.linear_interpolate(dir * roam_max_speed, roam_acceleration)
 			
@@ -134,25 +148,26 @@ func run_state(delta):
 					velocity.y *= -1
 					
 			anim_sprite.flip_h = (velocity.x > 0)
-		STATES.CHARGE:
+		STATES.AGGRO:
 			var r = 2.0
 			anim_sprite.offset = Vector2(rand_range(-r, r), rand_range(-r, r))
-		STATES.ATTACK:
-			var target_dist = position.distance_squared_to(attack_target)
-			var target_dir = position.direction_to(attack_target)
+		STATES.CHARGE:
+			var target_dist = position.distance_squared_to(charge_target)
+			var target_dir = position.direction_to(charge_target)
 			var speed = roam_max_speed * attack_speed_mul
 			var fac = target_dist/pow(attack_dist, 2)
 			
-			var vel = lerp(Vector2.ZERO, target_dir * speed, fac)
+			velocity = velocity.linear_interpolate(target_dir * speed, fac)
 			
-			if fac <= 0.1:
-				attack_reached = true
+			move_and_slide(velocity)
 			
-			move_and_collide(vel * delta)
+			if get_slide_count() > 0:
+				charge_collision = get_slide_collision(0)
+		STATES.ATTACK:
+			pass
 
-func _on_charge_timeout():
-	anim_sprite.offset *= 0.0
-	state = STATES.ATTACK
+func dist_to_player():
+	return position.distance_to(player.position)
 
 func _on_AnimatedSprite_animation_finished():
 	if anim_sprite.animation == "spawning":

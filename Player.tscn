@@ -94,7 +94,6 @@ func _ready():
 	
 	
 func _process(delta):
-	pass
 	if is_night:
 		if not in_light and ded_timer.is_stopped():
 			ded_timer.start(0.4)
@@ -175,6 +174,9 @@ __meta__ = {
 
 [node name="LightCheck" type="Area2D" parent="PlayerStatus"]
 collision_mask = 2
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerStatus/LightCheck"]
 shape = SubResource( 4 )
